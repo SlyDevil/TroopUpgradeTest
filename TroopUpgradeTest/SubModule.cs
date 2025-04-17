@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using TaleWorlds.Core;
 using TaleWorlds.Library;
 using TaleWorlds.MountAndBlade;
 
@@ -19,13 +20,22 @@ namespace TroopUpgradeTest
 
         }
 
-        protected override void OnBeforeInitialModuleScreenSetAsRoot()
+        public override void OnGameInitializationFinished(Game game)
         {
-            base.OnBeforeInitialModuleScreenSetAsRoot();            
+            base.OnGameInitializationFinished(game);
+            if (_lateHarmonyPatchApplied) {return;}
             Harmony harmony = new Harmony("upgrade_troops_smthg");
             harmony.PatchAll();
-            InformationManager.DisplayMessage(new InformationMessage("upgrade test loaded", Colors.Green));
+            _lateHarmonyPatchApplied = true;
         }
+
+        protected override void OnBeforeInitialModuleScreenSetAsRoot()
+        {
+            base.OnBeforeInitialModuleScreenSetAsRoot();
+            InformationManager.DisplayMessage(new InformationMessage("troop upgrade test present", Colors.Green));
+        }
+
+        private static bool _lateHarmonyPatchApplied = false;
         /*
         protected override void OnGameStart(Game game, IGameStarter gameStarterObject)
         {
