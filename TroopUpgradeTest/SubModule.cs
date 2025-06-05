@@ -1,7 +1,9 @@
 ﻿using HarmonyLib;
+using TaleWorlds.CampaignSystem;
 using TaleWorlds.Core;
 using TaleWorlds.Library;
 using TaleWorlds.MountAndBlade;
+using TOR_Core.CampaignMechanics;
 
 
 namespace TroopUpgradeTest
@@ -11,7 +13,8 @@ namespace TroopUpgradeTest
         protected override void OnSubModuleLoad()
         {
             base.OnSubModuleLoad();
-
+            //Harmony harmony = new Harmony("upgrade_troops_smthg");
+            //harmony.PatchAll();
         }
 
         protected override void OnSubModuleUnloaded()
@@ -20,13 +23,28 @@ namespace TroopUpgradeTest
 
         }
 
+        protected override void InitializeGameStarter(Game game, IGameStarter starterObject)
+        {
+            base.InitializeGameStarter(game, starterObject);
+            if (Game.Current.GameType is Campaign && starterObject is CampaignGameStarter)
+            {
+                var starter = starterObject as CampaignGameStarter;
+                if (starter != null)
+                {
+                    starter.RemoveBehaviors<TORPartyUpgraderCampaignBehavior>();
+                    starter.AddBehavior(new ReplacementPartyUpgraderCampaignBehavior());
+                }
+                }
+        }
+
         public override void OnGameInitializationFinished(Game game)
         {
             base.OnGameInitializationFinished(game);
-            if (_lateHarmonyPatchApplied) {return;}
+            /*if (_lateHarmonyPatchApplied) {return;}
             Harmony harmony = new Harmony("upgrade_troops_smthg");
             harmony.PatchAll();
             _lateHarmonyPatchApplied = true;
+            */
         }
 
         protected override void OnBeforeInitialModuleScreenSetAsRoot()
@@ -35,7 +53,7 @@ namespace TroopUpgradeTest
             InformationManager.DisplayMessage(new InformationMessage("troop upgrade test present", Colors.Green));
         }
 
-        private static bool _lateHarmonyPatchApplied = false;
+        //private static bool _lateHarmonyPatchApplied = false;
         /*
         protected override void OnGameStart(Game game, IGameStarter gameStarterObject)
         {
