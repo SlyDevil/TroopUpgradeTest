@@ -1,6 +1,9 @@
 ﻿using HarmonyLib;
+using System.Linq;
 using TaleWorlds.CampaignSystem;
+using TaleWorlds.CampaignSystem.ComponentInterfaces;
 using TaleWorlds.Core;
+using TaleWorlds.Engine;
 using TaleWorlds.Library;
 using TaleWorlds.MountAndBlade;
 using TOR_Core.CampaignMechanics;
@@ -32,7 +35,7 @@ namespace TroopUpgradeTest
                 if (starter != null)
                 {
                     starter.RemoveBehaviors<TORPartyUpgraderCampaignBehavior>();
-                    starter.AddBehavior(new ReplacementPartyUpgraderCampaignBehavior());
+                    starter.AddBehavior(new FancierPartyUpgraderCampaignBehavior());
                 }
                 }
         }
@@ -54,14 +57,18 @@ namespace TroopUpgradeTest
         }
 
         //private static bool _lateHarmonyPatchApplied = false;
-        /*
+        
         protected override void OnGameStart(Game game, IGameStarter gameStarterObject)
         {
             if (Game.Current.GameType is Campaign && gameStarterObject is CampaignGameStarter)
             {
-                var existingModel = GetGameModel<VolunteerModel>(gameStarterObject);
+                var existingModel = GetGameModel<PartyTrainingModel>(gameStarterObject);
                 //GetGameModel will return the default model if it doesn't find any others?
-                gameStarterObject.AddModel(new MaximumIndexHeroCanRecruitFromHeroOverRideModel(existingModel));
+                if (existingModel is null) 
+                    Debug.Print("Existing model is null");
+
+                gameStarterObject.AddModel(new ReplacementPartyTrainingModel(existingModel));
+                Debug.Print("Existing model : " + existingModel.ToString());
             }
         }
 
@@ -72,10 +79,9 @@ namespace TroopUpgradeTest
             for (int index = models.Length - 1; index >= 0; --index)
             {
                 if (models[index] is T gameModel1)
-                    return gameModel1;
+                    return gameModel1; //models are added in order of mods loading; start from last model and work backwards to find the most recent model of a given type added
             }
             return default;
         }
-        */
     }
 }

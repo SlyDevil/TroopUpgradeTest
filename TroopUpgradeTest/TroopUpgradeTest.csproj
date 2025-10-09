@@ -27,6 +27,7 @@
     </Reference>
     <Reference Include="TOR_Core">
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Mount &amp; Blade II Bannerlord\Modules\TOR_Core\bin\Win64_Shipping_Client\TOR_Core.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="$(GameFolder)\bin\$(GameBinariesFolder)\TaleWorlds.*.dll" Exclude="$(GameFolder)\bin\$(GameBinariesFolder)\TaleWorlds.Native.dll">
       <HintPath>%(Identity)</HintPath>
